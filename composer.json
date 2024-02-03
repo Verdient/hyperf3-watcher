@@ -1,0 +1,14 @@
+{
+    "name": "verdient/hyperf3-watcher",
+    "type": "library",
+    "require": {
+        "hyperf/contract": "^3.1",
+        "hyperf/engine": "^2.10",
+        "hyperf/watcher": "^3.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Verdient\\Hyperf3\\Watcher\\": "src"
+        }
+    }
+}
