@@ -9,60 +9,72 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Engine\Channel;
 use Hyperf\Watcher\Driver\AbstractDriver;
 use Hyperf\Watcher\Option;
+use Override;
+use Verdient\Hyperf3\Event\Event;
 
 /**
  * 扫描文件驱动
+ *
  * @author Verdient。
  */
 class ScanFileDriver extends AbstractDriver
 {
     /**
-     * 上次的修改时间集合
+     * @var array<string,int> 上次的修改时间集合
+     *
      * @author Verdient。
      */
     protected array $lastMtimes = [];
 
     /**
-     * 上次的哈希值集合
+     * @var array<string,string> 上次的哈希值集合
+     *
      * @author Verdient。
      */
     protected array $lastHashes = [];
 
     /**
-     * 当前的修改时间集合
+     * @var array<string,int> 当前的修改时间集合
+     *
      * @author Verdient。
      */
     protected array $currentMtimes = [];
 
     /**
-     * 当前的哈希值集合
+     * @var array<string,string> 当前的哈希值集合
+     *
      * @author Verdient。
      */
     protected array $currentHashes = [];
 
     /**
-     * 允许的扩展名
+     * @var array<string,bool> 允许的扩展名
+     *
      * @author Verdient。
      */
     protected array $extensions = [];
 
     /**
-     * 监控的文件夹集合
+     * @param string[] 监控的文件夹集合
+     *
      * @author Verdient。
      */
     protected array $dirs = [];
 
     /**
-     * 监控的文件集合
+     * @param string[] 监控的文件集合
+     *
      * @author Verdient。
      */
     protected array $files = [];
 
     /**
-     * @inheritdoc
+     * @param Option $option 选项
+     * @param StdoutLoggerInterface $logger 日志
+     *
      * @author Verdient。
      */
-    public function __construct(protected Option $option, private StdoutLoggerInterface $logger)
+    public function __construct(protected Option $option, protected StdoutLoggerInterface $logger)
     {
         parent::__construct($option);
 
@@ -88,10 +100,12 @@ class ScanFileDriver extends AbstractDriver
 
     /**
      * 初始化文件夹
+     *
      * @param string $dir 文件夹路径
+     *
      * @author Verdient。
      */
-    protected function initialDir($dir)
+    protected function initialDir(string $dir): void
     {
         foreach (new DirectoryIterator($dir) as $splFileInfo) {
             if ($splFileInfo->isFile()) {
@@ -109,22 +123,25 @@ class ScanFileDriver extends AbstractDriver
 
     /**
      * 初始化文件
+     *
      * @param string $path 文件路径
+     *
      * @author Verdient。
      */
-    protected function initialFile($path)
+    protected function initialFile(string $path): void
     {
         $this->lastMtimes[$path] = filemtime($path);
         $this->lastHashes[$path] = hash_file('md5', $path);
     }
 
     /**
-     * @inheritdoc
      * @author Verdient。
      */
+    #[Override]
     public function watch(Channel $channel): void
     {
         $seconds = $this->option->getScanIntervalSeconds();
+
         $this->timerId = $this->timer->tick($seconds, function () use ($channel) {
             try {
 
@@ -151,6 +168,7 @@ class ScanFileDriver extends AbstractDriver
                 foreach ($addedFiles as $file) {
                     $channel->push($file);
                 }
+
                 if ($deletedCount === 0) {
                     foreach ($changedFiles as $file) {
                         $channel->push($file);
@@ -158,6 +176,15 @@ class ScanFileDriver extends AbstractDriver
                 } else {
                     $this->logger->warning('Delete files must be restarted manually to take effect.');
                 }
+
+                $eventFiles = [...$changedFiles, ...$addedFiles, ...$deletedFiles];
+
+                if (!empty($eventFiles)) {
+                    foreach ($eventFiles as $eventFile) {
+                        Event::dispatch(new FileChangedEvent($eventFile));
+                    }
+                }
+
                 $this->lastMtimes = $this->currentMtimes;
                 $this->lastHashes = $this->currentHashes;
                 $this->currentMtimes = [];
@@ -170,11 +197,13 @@ class ScanFileDriver extends AbstractDriver
 
     /**
      * 扫描文件夹
+     *
      * @param string $dir 文件夹路径
-     * @return array
+     *
+     * @return array{0:string[],1:string[]}
      * @author Verdient。
      */
-    protected function scanDir($dir)
+    protected function scanDir($dir): array
     {
         $changedFiles = [];
         $addedFiles = [];
@@ -223,11 +252,13 @@ class ScanFileDriver extends AbstractDriver
 
     /**
      * 扫描文件
-     * @param array $paths 文件路径集合
-     * @return array
+     *
+     * @param string[] $paths 文件路径集合
+     *
+     * @return array{0:string[],1:string[]}
      * @author Verdient。
      */
-    protected function scanFiles(array $paths)
+    protected function scanFiles(array $paths): array
     {
         $changedFiles = [];
         $addedFiles = [];

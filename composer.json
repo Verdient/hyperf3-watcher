@@ -3,12 +3,22 @@
     "type": "library",
     "require": {
         "hyperf/contract": "^3.1",
-        "hyperf/engine": "^2.10",
-        "hyperf/watcher": "^3.1"
+        "hyperf/engine": "^2.15",
+        "hyperf/watcher": "^3.1",
+        "verdient/hyperf3-event": "^2.0",
+        "hyperf/config": "^3.1"
     },
     "autoload": {
         "psr-4": {
             "Verdient\\Hyperf3\\Watcher\\": "src"
         }
+    },
+    "extra": {
+        "hyperf": {
+            "config": "Verdient\\Hyperf3\\Watcher\\ConfigProvider"
+        }
+    },
+    "require-dev": {
+        "swoole/ide-helper": "^6.0"
     }
 }
