@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Verdient\Hyperf3\Watcher;
 
 use Hyperf\Watcher\Command\WatchCommand as CommandWatchCommand;
+use Hyperf\Watcher\Watcher as WatcherWatcher;
 use Verdient\Hyperf3\Watcher\WatchCommand;
+use Verdient\Hyperf3\Watcher\Watcher;
 
 class ConfigProvider
 {
@@ -13,15 +15,9 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                CommandWatchCommand::class => WatchCommand::class
-            ],
-            'annotations' => [
-                'scan' => [
-                    'class_map' => [
-                        \Hyperf\Watcher\Process::class => __DIR__ . '/class_map/Process.php',
-                    ]
-                ],
-            ],
+                CommandWatchCommand::class => WatchCommand::class,
+                WatcherWatcher::class => Watcher::class
+            ]
         ];
     }
 }
