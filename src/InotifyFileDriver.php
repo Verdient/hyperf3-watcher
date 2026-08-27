@@ -58,7 +58,7 @@ class InotifyFileDriver implements DriverInterface
     protected float $lastEventAt = 0;
 
     /**
-     * @var string<string,string> 上次的哈希值集合
+     * @var array<string,string> 上次的哈希值集合
      *
      * @author Verdient。
      */
@@ -245,12 +245,12 @@ class InotifyFileDriver implements DriverInterface
 
         unset($this->dirs[$path], $this->descriptorMap[$path], $this->pathMap[$wd]);
 
-        foreach ($this->collectRemovedFiles($path) as $path) {
-            $this->removeFileWatch($path);
+        foreach ($this->collectRemovedFiles($path) as $path2) {
+            $this->removeFileWatch($path2);
         }
 
-        foreach ($this->collectRemovedDirs($path) as $path) {
-            $this->removeDirWatch($path);
+        foreach ($this->collectRemovedDirs($path) as $path2) {
+            $this->removeDirWatch($path2);
         }
     }
 

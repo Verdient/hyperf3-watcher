@@ -55,14 +55,14 @@ class ScanFileDriver extends AbstractDriver
     protected array $extensions = [];
 
     /**
-     * @param string[] 监控的文件夹集合
+     * @param string[] $dirs 监控的文件夹集合
      *
      * @author Verdient。
      */
     protected array $dirs = [];
 
     /**
-     * @param string[] 监控的文件集合
+     * @param string[] $files 监控的文件集合
      *
      * @author Verdient。
      */

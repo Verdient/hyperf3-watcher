@@ -14,7 +14,14 @@ class ConfigProvider
         return [
             'dependencies' => [
                 CommandWatchCommand::class => WatchCommand::class
-            ]
+            ],
+            'annotations' => [
+                'scan' => [
+                    'class_map' => [
+                        \Hyperf\Watcher\Process::class => __DIR__ . '/class_map/Process.php',
+                    ]
+                ],
+            ],
         ];
     }
 }
