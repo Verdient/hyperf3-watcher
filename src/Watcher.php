@@ -34,7 +34,7 @@ class Watcher extends HyperfWatcher
                     $this->restart(false);
                 }
             } else {
-                $ret = exec(sprintf('%s %s/collector-reload.php %s', $this->option->getBin(), __DIR__, $file));
+                $ret = exec(sprintf('%s %s/collector-reload.php %s', $this->option->getBin(), dirname(__DIR__), $file));
                 if (isset($ret['code']) && $ret['code'] === 0) {
                     $this->output->writeln('Class reload success.');
                 } else {
