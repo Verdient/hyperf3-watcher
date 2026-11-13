@@ -5,9 +5,9 @@
         "hyperf/contract": "^3.2",
         "hyperf/engine": "^2.15",
         "hyperf/watcher": "^3.2",
-        "verdient/hyperf3-event": "^2.1",
+        "verdient/hyperf3-event": "^3.2",
         "hyperf/config": "^3.2",
-        "verdient/hyperf3-di": "^2.1"
+        "verdient/hyperf3-di": "^3.2"
     },
     "autoload": {
         "psr-4": {
